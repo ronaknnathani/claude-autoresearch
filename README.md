@@ -11,22 +11,32 @@ You tell Claude what to optimize and how to measure it. Claude does the rest —
 ## Install
 
 ```bash
-# Clone
-git clone https://github.com/youruser/claude-autoresearch.git
+# Clone the plugin
+git clone https://github.com/ronaknnathani/claude-autoresearch.git
+
+# Build the CLI (requires Go 1.21+)
 cd claude-autoresearch
-
-# Build the CLI
 go build -o bin/autoresearch .
-
-# Add skills to Claude Code (symlink into your project's .claude/ or global skills)
 ```
+
+Then add it to Claude Code:
+
+```bash
+# For local testing
+claude --plugin-dir /path/to/claude-autoresearch
+
+# Or install permanently (user scope)
+claude plugin install /path/to/claude-autoresearch
+```
+
+The Go binary in `bin/` is automatically added to Claude's PATH — skills call `autoresearch` directly.
 
 ## Usage
 
 Start an autoresearch session from Claude Code:
 
 ```
-/autoresearch optimize pod scheduling latency, keep all existing tests passing
+/claude-autoresearch:start optimize pod scheduling latency, keep all existing tests passing
 ```
 
 That's it. Claude will:
@@ -42,7 +52,7 @@ You can walk away. Come back hours later to find dozens of experiments logged, w
 If Claude hits a context limit or you restart, it picks up where it left off:
 
 ```
-/autoresearch continue optimizing, check the ideas backlog
+/claude-autoresearch:start continue optimizing, check the ideas backlog
 ```
 
 Claude reads `autoresearch.md` and `autoresearch.jsonl` to reconstruct full context.
@@ -50,7 +60,7 @@ Claude reads `autoresearch.md` and `autoresearch.jsonl` to reconstruct full cont
 ### View progress
 
 ```
-/autoresearch-export
+/claude-autoresearch:export
 ```
 
 Opens a live dashboard in your browser with a chart, metrics table, and confidence scores. Updates in real time as experiments run.
@@ -60,7 +70,7 @@ Opens a live dashboard in your browser with a chart, metrics table, and confiden
 When you're happy with the results:
 
 ```
-/autoresearch-finalize
+/claude-autoresearch:finalize
 ```
 
 Claude groups the kept experiments into clean, independent branches — each from the merge-base, each reviewable and mergeable on its own.
@@ -174,7 +184,7 @@ The score is advisory. It never auto-discards. Claude is instructed to use it as
 You're tuning a custom scheduler plugin and want to reduce pod scheduling latency.
 
 ```
-/autoresearch optimize p99 scheduling latency for batch workloads
+/claude-autoresearch:start optimize p99 scheduling latency for batch workloads
 ```
 
 **Benchmark script** (`autoresearch.sh`):
@@ -195,7 +205,7 @@ Claude will iterate on the scoring plugin, queue sorting, preemption logic — k
 Your team's base images take 8 minutes to build. You want that under 3.
 
 ```
-/autoresearch optimize container build time for the platform base image
+/claude-autoresearch:start optimize container build time for the platform base image
 ```
 
 **Benchmark script**:
@@ -217,7 +227,7 @@ Claude will try multi-stage build reordering, layer caching strategies, dependen
 Complex Helm charts are slow to render locally, blocking the dev loop.
 
 ```
-/autoresearch optimize helm template render time for the platform charts
+/claude-autoresearch:start optimize helm template render time for the platform charts
 ```
 
 **Benchmark script**:
@@ -242,7 +252,7 @@ echo "METRIC render_ms=${SORTED[2]}"
 Your infra repo's tests take 4 minutes. Most of that is integration tests starting containers.
 
 ```
-/autoresearch optimize test suite runtime, tests must still pass
+/claude-autoresearch:start optimize test suite runtime, tests must still pass
 ```
 
 **Benchmark script**:
@@ -271,7 +281,7 @@ Claude will try test parallelization, shared fixtures, removing redundant setup,
 You've got a custom aggregated API server that's using too much memory under load.
 
 ```
-/autoresearch reduce peak heap usage of the aggregated API server under load test, keep all API responses correct
+/claude-autoresearch:start reduce peak heap usage of the aggregated API server under load test, keep all API responses correct
 ```
 
 **Benchmark script**:
@@ -297,7 +307,7 @@ echo "METRIC p99_latency_ms=$LATENCY_P99"
 Your Kafka→Flink streaming pipeline's checkpoints are too slow, causing backpressure.
 
 ```
-/autoresearch reduce flink checkpoint duration while maintaining exactly-once semantics
+/claude-autoresearch:start reduce flink checkpoint duration while maintaining exactly-once semantics
 ```
 
 **Benchmark script**:
@@ -320,7 +330,7 @@ echo "METRIC state_bytes=$SIZE"
 Your platform service takes 30 seconds to start because of heavy initialization.
 
 ```
-/autoresearch optimize service startup time, service must pass health checks
+/claude-autoresearch:start optimize service startup time, service must pass health checks
 ```
 
 **Benchmark script**:
@@ -350,7 +360,7 @@ Claude will try lazy initialization, parallel init, removing unnecessary pre-war
 Large infra repos with hundreds of resources take forever to plan.
 
 ```
-/autoresearch optimize terraform plan time for the k8s-clusters module
+/claude-autoresearch:start optimize terraform plan time for the k8s-clusters module
 ```
 
 **Benchmark script**:
@@ -372,6 +382,10 @@ echo "METRIC resource_count=$RESOURCES"
 
 ```
 claude-autoresearch/
+├── .claude-plugin/
+│   └── plugin.json      # Plugin manifest
+├── bin/
+│   └── autoresearch     # Go binary (auto-added to PATH)
 ├── main.go              # Subcommand dispatch
 ├── init.go              # autoresearch init
 ├── run.go               # autoresearch run (timing, metric parsing, checks)
@@ -382,13 +396,12 @@ claude-autoresearch/
 ├── assets/
 │   └── template.html    # Dashboard (embedded via go:embed)
 ├── skills/
-│   ├── autoresearch/         # /autoresearch — setup + autonomous loop
-│   ├── autoresearch-finalize/ # /autoresearch-finalize — clean branches
-│   └── autoresearch-export/   # /autoresearch-export — live dashboard
+│   ├── start/           # /claude-autoresearch:start — setup + autonomous loop
+│   ├── finalize/        # /claude-autoresearch:finalize — clean branches
+│   └── export/          # /claude-autoresearch:export — live dashboard
 ├── tests/
-│   └── finalize_test.sh  # 18 tests for branch finalization
-├── go.mod
-└── package.json
+│   └── finalize_test.sh # 18 tests for branch finalization
+└── go.mod
 ```
 
 ## Prerequisites

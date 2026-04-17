@@ -1,5 +1,4 @@
 ---
-name: autoresearch
 description: Set up and run an autonomous experiment loop for any optimization target. Gathers what to optimize, then starts the loop immediately. Use when asked to "run autoresearch", "optimize X in a loop", "set up autoresearch for X", or "start experiments".
 ---
 
@@ -9,11 +8,11 @@ Autonomous experiment loop: try ideas, keep what works, discard what doesn't, ne
 
 ## CLI
 
-The `autoresearch` binary is at `<SKILL_DIR>/../../bin/autoresearch`. Use it via Bash:
+The `autoresearch` binary is on PATH. Use it via Bash:
 
-- **`<SKILL_DIR>/../../bin/autoresearch init <name> <metric_name> [unit] [direction]`** — configure session (name, metric, unit, direction). Call again to re-initialize with a new baseline when the optimization target changes.
-- **`<SKILL_DIR>/../../bin/autoresearch run <command> [timeout] [checks_timeout]`** — runs command, times it, captures output, parses METRIC lines, runs checks if autoresearch.checks.sh exists.
-- **`<SKILL_DIR>/../../bin/autoresearch log <status> <metric> <description> [commit] [metrics_json] [asi_json]`** — records result. `keep` auto-commits. `discard`/`crash`/`checks_failed` auto-reverts code changes (autoresearch files preserved). Computes confidence score.
+- **`autoresearch init <name> <metric_name> [unit] [direction]`** — configure session (name, metric, unit, direction). Call again to re-initialize with a new baseline when the optimization target changes.
+- **`autoresearch run <command> [timeout] [checks_timeout]`** — runs command, times it, captures output, parses METRIC lines, runs checks if autoresearch.checks.sh exists.
+- **`autoresearch log <status> <metric> <description> [commit] [metrics_json] [asi_json]`** — records result. `keep` auto-commits. `discard`/`crash`/`checks_failed` auto-reverts code changes (autoresearch files preserved). Computes confidence score.
 
 ## Setup
 
@@ -125,9 +124,9 @@ pnpm typecheck 2>&1 | grep -i error || true
 Each iteration follows this pattern:
 
 1. **Modify code** based on your learnings and strategy
-2. **Run experiment**: `<SKILL_DIR>/../../bin/autoresearch run "./autoresearch.sh"`
+2. **Run experiment**: `autoresearch run "./autoresearch.sh"`
 3. **Decide keep/discard** based on metric improvement
-4. **Log result**: `<SKILL_DIR>/../../bin/autoresearch log <status> <metric> <description> [commit] [metrics_json] [asi_json]`
+4. **Log result**: `autoresearch log <status> <metric> <description> [commit] [metrics_json] [asi_json]`
 5. **Repeat**
 
 Rules:

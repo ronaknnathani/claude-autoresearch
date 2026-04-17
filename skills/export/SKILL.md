@@ -1,5 +1,4 @@
 ---
-name: autoresearch-export
 description: Open a live dashboard for autoresearch experiments in the browser. Use when asked to "export autoresearch", "show dashboard", or "view experiment results".
 ---
 
@@ -12,7 +11,7 @@ Launch a live browser dashboard showing experiment progress, metrics chart, and 
 Run the dashboard server:
 
 ```bash
-<SKILL_DIR>/../../bin/autoresearch serve
+autoresearch serve
 ```
 
 This starts an HTTP server on port 8787 (or next available) that:

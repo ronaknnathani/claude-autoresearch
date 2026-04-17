@@ -1,0 +1,11 @@
+{
+  "name": "claude-autoresearch",
+  "version": "1.0.0",
+  "description": "Autonomous experiment loop — try ideas, measure them, keep what works, discard what doesn't, repeat forever. Works for any optimization target: test speed, build time, memory usage, latency, bundle size.",
+  "author": {
+    "name": "Ronak Nathani"
+  },
+  "repository": "https://github.com/ronaknnathani/claude-autoresearch",
+  "license": "MIT",
+  "keywords": ["autoresearch", "optimization", "benchmark", "experiment"]
+}

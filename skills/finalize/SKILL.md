@@ -1,5 +1,4 @@
 ---
-name: autoresearch-finalize
 description: Finalize an autoresearch session into clean, reviewable branches. Use when asked to "finalize autoresearch", "clean up experiments", or "prepare autoresearch for review".
 ---
 

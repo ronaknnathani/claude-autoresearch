@@ -140,13 +140,15 @@ Launch a live dashboard in the browser. Embeds the HTML — no external files ne
 
 ## Session files
 
+These files are created **in your project directory** when Claude starts an autoresearch session. They are not part of this plugin — they live alongside your code, like a Makefile.
+
 | File | Purpose |
 |------|---------|
 | `autoresearch.md` | Living doc — objective, metrics, files in scope, what's been tried. The heart of the session. |
-| `autoresearch.sh` | Benchmark script — outputs `METRIC name=value` lines. Keep it fast. |
-| `autoresearch.checks.sh` | *(optional)* Correctness checks (tests, types, lint). Failures block `keep`. |
-| `autoresearch.jsonl` | Append-only experiment log. Survives everything. |
-| `autoresearch.ideas.md` | *(optional)* Backlog of promising but deferred ideas. |
+| `autoresearch.sh` | Benchmark script that Claude writes for your specific workload. Outputs `METRIC name=value` lines to stdout. The CLI runs this script each iteration and parses the metrics. |
+| `autoresearch.checks.sh` | *(optional)* Correctness checks (tests, types, lint). Runs after each passing benchmark. Failures block `keep`. |
+| `autoresearch.jsonl` | Append-only experiment log. Survives everything — context resets, crashes, restarts. |
+| `autoresearch.ideas.md` | *(optional)* Backlog of promising but deferred optimizations. |
 | `autoresearch.config.json` | *(optional)* `{"maxIterations": 50}` to cap runs. |
 
 ---
